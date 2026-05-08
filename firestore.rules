@@ -1,0 +1,40 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global helper functions
+    function isSignedIn() { return request.auth != null; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    // Validation helpers
+    function isValidProperty(data) {
+      return data.address is string && data.address.size() <= 200 &&
+             data.street is string && data.street.size() <= 100 &&
+             data.lawnAreaSqFt is number && data.lawnAreaSqFt >= 0 &&
+             data.ownerId is string && data.ownerId == request.auth.uid;
+    }
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Properties collection
+    match /properties/{propertyId} {
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow get: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(propertyId) && isValidProperty(incoming());
+      allow update: if isSignedIn() && isValidProperty(incoming()) && incoming().ownerId == existing().ownerId;
+      allow delete: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+    }
+
+    // Apps collection (Publicly readable, but admin only writeable if you had admin logic, but here we keep simple)
+    match /apps/{appId} {
+      allow read: if isSignedIn();
+      allow write: if false; // Only manual population for now
+    }
+  }
+}

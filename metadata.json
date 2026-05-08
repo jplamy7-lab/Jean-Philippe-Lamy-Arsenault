@@ -1,0 +1,8 @@
+{
+  "name": "LawnScan Metrics",
+  "description": "An application to map out properties, calculate lawn area, and compare similar lawn care tools.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": []
+}

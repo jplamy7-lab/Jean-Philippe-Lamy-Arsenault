@@ -1,0 +1,49 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Information about the application user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Unique user ID" },
+        "email": { "type": "string", "description": "User email address" }
+      },
+      "required": ["userId", "email"]
+    },
+    "Property": {
+      "title": "Property",
+      "description": "Information about a property including its address and lawn area.",
+      "type": "object",
+      "properties": {
+        "propertyId": { "type": "string", "description": "Unique property ID" },
+        "address": { "type": "string", "description": "Full street address" },
+        "street": { "type": "string", "description": "Street name" },
+        "lawnAreaSqFt": { "type": "number", "description": "Lawn area in square feet" },
+        "ownerId": { "type": "string", "description": "Owner user ID" }
+      },
+      "required": ["propertyId", "address", "street", "lawnAreaSqFt", "ownerId"]
+    },
+    "AppInfo": {
+      "title": "AppInfo",
+      "description": "Information about competing lawn care apps.",
+      "type": "object",
+      "properties": {
+        "appId": { "type": "string", "description": "Unique app ID" },
+        "name": { "type": "string", "description": "Application name" },
+        "averageRating": { "type": "number", "description": "Average user rating" },
+        "url": { "type": "string", "description": "Link to the app" }
+      },
+      "required": ["appId", "name", "averageRating"]
+    }
+  },
+  "firestore": {
+    "/properties/{propertyId}": {
+      "schema": "Property",
+      "description": "Collection of user properties."
+    },
+    "/apps/{appId}": {
+      "schema": "AppInfo",
+      "description": "Collection of competing apps and their ratings."
+    }
+  }
+}
